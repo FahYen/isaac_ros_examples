@@ -32,9 +32,9 @@ class IsaacROSZedStereoRectLaunchFragment(IsaacROSLaunchFragment):
     @staticmethod
     def get_interface_specs() -> Dict[str, Any]:
         return {
-            'camera_resolution': {'width': 1200, 'height': 720},
-            'camera_frame': 'zed2_base_link',
-            'camera_model': 'zed2',
+            'camera_resolution': {'width': 1280, 'height': 720},
+            'camera_frame': 'zedm_base_link',
+            'camera_model': 'zedm',
             'focal_length': {
                 # Approximation - most zed cameras should be close to this value
                 'f_x': 527.886474609375,
@@ -46,8 +46,8 @@ class IsaacROSZedStereoRectLaunchFragment(IsaacROSLaunchFragment):
     @staticmethod
     def get_composable_nodes(interface_specs: Dict[str, Any]) -> Dict[str, ComposableNode]:
         # The zed camera mode name. zed, zed2, zed2i, zedm, zedx or zedxm
-        camera_model = interface_specs['camera_model']
-        pub_frame_rate = LaunchConfiguration('pub_frame_rate')
+        camera_model = interface_specs['camera_model']             # zedm from zedm_interface_specs.json
+        pub_frame_rate = LaunchConfiguration('pub_frame_rate')     # 30.0 from terminal command
 
         # ZED Configurations to be loaded by ZED Node
         config_common = os.path.join(
@@ -61,8 +61,8 @@ class IsaacROSZedStereoRectLaunchFragment(IsaacROSLaunchFragment):
             'config',
             camera_model + '.yaml'
         )
-        base_parameters = [config_common, config_camera]
-        override_parameters = {'general.pub_frame_rate': pub_frame_rate}
+        base_parameters = [config_common, config_camera]                    # zed_mono.yaml and zedm.yaml
+        override_parameters = {'general.pub_frame_rate': pub_frame_rate}    # 30.0 from terminal command
         parameters = base_parameters + [override_parameters]
 
         return {
@@ -72,8 +72,8 @@ class IsaacROSZedStereoRectLaunchFragment(IsaacROSLaunchFragment):
                 name='image_format_node_left',
                 parameters=[{
                     'encoding_desired': 'rgb8',
-                    'image_width': interface_specs['camera_resolution']['width'],
-                    'image_height': interface_specs['camera_resolution']['height'],
+                    'image_width': interface_specs['camera_resolution']['width'],     # 1920 from zedm_interface_specs.json
+                    'image_height': interface_specs['camera_resolution']['height'],   # 1200 from zedm_interface_specs.json
                 }],
                 remappings=[
                     ('image_raw', 'zed_node/left/image_rect_color'),
@@ -85,8 +85,8 @@ class IsaacROSZedStereoRectLaunchFragment(IsaacROSLaunchFragment):
                 name='image_format_node_right',
                 parameters=[{
                     'encoding_desired': 'rgb8',
-                    'image_width': interface_specs['camera_resolution']['width'],
-                    'image_height': interface_specs['camera_resolution']['height'],
+                    'image_width': interface_specs['camera_resolution']['width'],     # 1920 from zedm_interface_specs.json
+                    'image_height': interface_specs['camera_resolution']['height'],   # 1200 from zedm_interface_specs.json
                 }],
                 remappings=[
                     ('image_raw', 'zed_node/right/image_rect_color'),
@@ -98,7 +98,7 @@ class IsaacROSZedStereoRectLaunchFragment(IsaacROSLaunchFragment):
                 plugin='tf2_ros::StaticTransformBroadcasterNode',
                 parameters=[{
                     'frame_id': 'base_link',
-                    'child_frame_id': camera_model+'_camera_link',
+                    'child_frame_id': camera_model+'_camera_link',       # zedm_camera_link from zedm_interface_specs.json
                     'translation.x': 0.0,
                     'translation.y': 0.0,
                     'translation.z': 0.1,
