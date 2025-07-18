@@ -105,7 +105,7 @@ class IsaacROSZedStereoRectLaunchFragment(IsaacROSLaunchFragment):
                     'rotation.x': -0.5,
                     'rotation.y': 0.5,
                     'rotation.z': -0.5,
-                    'rotation.w': 0.5}]
+                    'rotation.w': 0.5}]             # Roll: -90, Pitch: 0, Yaw:-90
             ),
             'zed_wrapper_component': ComposableNode(
                 package='zed_components',
